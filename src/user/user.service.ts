@@ -1,24 +1,32 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    return this.prisma.user.create({
+
+    const existingUser = await this.prisma.user.findUnique({ where: { email: createUserDto.email } });
+    if (existingUser) {
+      throw new ConflictException('Este e-mail já está sendo usado.');
+    }
+
+    const hashedPassword = await bcrypt.hash(createUserDto.senha, 10);
+    
+    return await this.prisma.user.create({
       data: {
-        email: createUserDto.email,
-        senha: createUserDto.senha,
-        name: createUserDto.name,
+        ...createUserDto,
+        senha: hashedPassword,
       },
     });
   }
 
   async findAll() {
-    return this.prisma.user.findMany({
+    return await this.prisma.user.findMany({
       select: {
         id: true,
         email: true,
@@ -59,12 +67,13 @@ export class UserService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return this.prisma.user.update({
+    const hashedPassword = await bcrypt.hash(updateUserDto.senha, 10);
+
+    return await this.prisma.user.update({
       where: { id },
       data: {
-        email: updateUserDto.email,
-        senha: updateUserDto.senha,
-        name: updateUserDto.name,
+        ...updateUserDto,
+        senha: hashedPassword,
       },
       select: {
         id: true,
@@ -86,7 +95,7 @@ export class UserService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return this.prisma.user.delete({
+    return await this.prisma.user.delete({
       where: { id },
       select: {
         id: true,
