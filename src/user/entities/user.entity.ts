@@ -1,11 +1,8 @@
-import { Post } from 'src/post/entities/post.entity';
-
-export class User {
+export class UserEntity {
     id: string;
     email: string;
     senha: string;
     name?: string;
-    posts: Post[];
     createdAt: Date;
     updatedAt: Date;
 }
