@@ -18,7 +18,6 @@ export class AuthService {
             email: user.email,
         };
 
-        console.log("Valor da chave secreta:", process.env.JWT_SECRET);
         const jwtToken = this.jwtService.sign(payload);
 
         return {
