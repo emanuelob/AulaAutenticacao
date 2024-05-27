@@ -1,13 +1,21 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Public } from './auth/decorators/is-public.decorator';
+import { CurrentUser } from './auth/decorators/current-user.decorator';
+import { UserEntity } from './user/entities/user.entity';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Public()
   @Get()
-  getHello(@Request() req): string {
-    console.log(req.user);
+  getHello(): string {
     return this.appService.getHello();
+  }
+
+  @Get('me')
+  getMe(@CurrentUser() user: UserEntity) {
+    return user;
   }
 }
