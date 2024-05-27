@@ -18,7 +18,9 @@ export class AuthService {
             email: user.email,
         };
 
-        const jwtToken = this.jwtService.sign(payload);
+        console.log("Secret usado para gerar o token:", process.env.JWT_SECRET);
+
+        const jwtToken = this.jwtService.sign(payload, {expiresIn: '1d', secret: process.env.JWT_SECRET});
 
         return {
             access_token: jwtToken,

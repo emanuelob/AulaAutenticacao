@@ -16,6 +16,7 @@ export class AppController {
 
   @Get('me')
   getMe(@CurrentUser() user: UserEntity) {
+    console.log('AppController - User in getMe:', user);
     return user;
   }
 }

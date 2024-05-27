@@ -7,7 +7,7 @@ import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {	
   constructor(
     private readonly userService: UserService,
     private readonly configService: ConfigService) {
@@ -18,15 +18,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
   
-  async validate(payload: UserPayload): Promise<UserFromJwt> {
-    const userExists = await this.userService.findByEmail(payload.email);
-    if (!userExists) {
-      throw new UnauthorizedException('Usuário ou senha incorretos');
-    }
-    
-    return {
-      userId: payload.sub, 
-      email: payload.email,
-    };
+  async validate(payload: any) {
+    // request.user = payload
+
+    console.log('JwtStrategy - Payload:', payload);
+    return payload;
   }
+  
 }

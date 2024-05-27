@@ -6,11 +6,12 @@ import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { AuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [PrismaModule, UserModule, PostModule, AuthModule,
+  imports: [PrismaModule, UserModule, PostModule, AuthModule, JwtModule,
     ConfigModule.forRoot({
       isGlobal: true,
     })
@@ -20,7 +21,7 @@ import { APP_GUARD } from '@nestjs/core';
     AppService,
       {
         provide: APP_GUARD,
-        useClass: JwtAuthGuard,
+        useClass: AuthGuard,
       },
     ],
 })

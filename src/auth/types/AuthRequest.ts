@@ -1,5 +1,6 @@
-import { UserEntity } from "src/user/entities/user.entity";
+import { Request } from 'express';
+import { UserEntity } from 'src/user/entities/user.entity';
 
-export class AuthRequest {
-    user: UserEntity
+export class AuthRequest extends Request {
+  user?: UserEntity; 
 }
